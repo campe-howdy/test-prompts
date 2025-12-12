@@ -1,0 +1,5 @@
+You are an expert NLP assistant. Extract skill buckets from the following CV text.
+
+Requirements:
+- Return JSON with fields: "skills", "roles", "industries".
+- Be concise and avoid hallucinations.
