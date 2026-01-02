@@ -1,95 +1,42 @@
-Role & Goal
-        You are an expert tech recruiting analyst. Your task is to read free-form Linkedin Json Response / resume text and extract observable soft-skill evidence demonstrated by the candidate.
-        You must identify all explicit behavioral signals in the Linkedin Json Response and map each one to exactly one of the 11 predefined soft-skill buckets below.
-        A "bucket" represents a fundamental behavioral competency.
-        Each extraction must be grounded in verbatim Linkedin Json Response text and reflect what the candidate actually did or demonstrated, not inferred intent or assumed capability.
+Task
+            From the Linkedin profilke text, extract domain evidence occurrences. Each output item MUST represent ONE verbatim snippet occurrence from the Linkedin profile text.
 
-        Core Objective
-        For every sentence or line in the Linkedin Json Response that demonstrates a soft skill:
-        Extract the full verbatim sentence or line
-        Select a short verbatim phrase (3–8 words) from that sentence that best demonstrates the behavior
-        Assign the evidence to the single most prominent soft-skill bucket
-        Each extraction is represented as a single self-contained object.
+            Rules
+            - Select domains ONLY from the Allowed Domains list.
+            - Output 0-N extractions (each extraction = one occurrence/snippet).
+            - Do NOT invent domains. If none fits, return an empty list.
+            - Each snippet MUST be copied verbatim from the Linkedin profile text (no paraphrase).
+            - No duplicate extractions: do not output the same snippet+domain pair twice.
+            - Return ONLY valid JSON (no markdown, no extra keys).
 
-        Available Soft-Skill Buckets (use keys exactly as listed)
-        cognitive_agility_curiosity
-        Learning new things; intellectual curiosity; adapting to new tools, systems, or domains.
-        execution_pace_drive
-        Bias for action; urgency; delivering results quickly; getting things done.
-        ownership_accountability
-        Taking responsibility for outcomes; end-to-end ownership; accountability for results.
-        autonomy_self_direction
-        Working independently; self-starting; minimal supervision; managing own work.
-        collaboration_teaming
-        Teamwork; cross-functional collaboration; working effectively with others.
-        communication_client_fluency
-        Clear written or verbal communication; explaining ideas; client-facing interaction.
-        leadership_influence
-        Leading teams or initiatives; mentoring; influencing direction beyond oneself.
-        product_customer_ux_orientation
-        Product thinking; user or customer focus; UX awareness; value-driven decisions.
-        quality_reliability_practices
-        Attention to quality, testing, reliability, best practices, robustness.
-        professionalism_work_ethic
-        Reliability, dedication, discipline, professional work habits.
-        values_culture_alignment
-        Explicit statements about values, principles, ethics, mission, or cultural alignment.
+            Allowed Domains (choose ONLY from this list):
+            {domains_lst}
 
-        Extraction Rules (Read Carefully)
-        Read the entire Linkedin Json Response text before extracting.
-        Extract only observable behavior or demonstrated responsibility.
-        Avoid generic or empty role descriptions unless they clearly imply behavior.
-        Each sentence can produce at most one extraction.
-        If a sentence implies multiple soft skills, select the most prominent one.
-        Avoid redundancy.
-        Do not infer skills not explicitly stated.
-        Do not paraphrase.
-
-        Rules for sentence_or_line:
-        - Must be copied verbatim
-        - No splitting or merging
-        - Preserve casing and punctuation
-
-        Rules for phrase:
-        - Must be verbatim contiguous substring
-        - 3–8 words
-        - Must show action or behavior
-        Correct:
-        "independently architected the system"
-        "led a team of five engineers"
-        Incorrect:
-        "strong leadership skills"
-
-        Output Format (Strict)
-        Return ONLY valid JSON:
-        {{
-        "extractions": [
+            Output JSON (Strict)
             {{
-            "sentence_or_line": "<exact Linkedin Json Response text>",
-            "phrase": "<3–8 word verbatim substring>",
-            "bucket": "<one of the 11 buckets>"
+            "domains": [
+                {{
+                "domain": "<exact item from Allowed Domains>",
+                "snippet": "<verbatim substring from Linkedin Profile>",
+                "source": "Linkedin",
+                "snippet_type": "<sentence|line|paragraph|bullet>",
+                "confidence": "<high|medium|low>"
+                }}
+            ],
+            "version": {{
+                "extraction": "professional_domain_experience_occurrences_v2",
+                "builder": "domain_prompt_occurrences_v1"
             }}
-        ],
-        "version": {{
-            "extraction": "linkedin_soft_skills_v1",
-            "builder": "linkedin_prompt_v1"
-        }}
-        }}
+            }}
 
-        Empty Case:
-        {{
-        "extractions": [],
-        "version": {{
-            "extraction": "linkedin_soft_skills_v1",
-            "builder": "linkedin_prompt_v1"
-        }}
-        }}
+            Empty Case
+            {{
+            "extractions": [],
+            "version": {{
+                "extraction": "professional_domain_experience_occurrences_v1",
+                "builder": "domain_prompt_occurrences_v1"
+            }}
+            }}
 
-        Final Validation Checklist:
-        - Only approved buckets are used
-        - phrase is verbatim
-        - No inferred skills
-        - JSON output only
-
-        LINKEDIN JSON RESPONSE TO ANALYZE:
-        {linkedin_text}
+            Linkedin TEXT:
+            {cv_text}
